@@ -33,7 +33,7 @@ namespace SampleSupport
             samplesTreeView.Nodes.Add(rootNode);
             rootNode.Expand();
 
-            foreach(SampleHarness harness in harnesses)
+            foreach (SampleHarness harness in harnesses)
             {
                 TreeNode harnessNode = new TreeNode(harness.Title);
                 harnessNode.Tag = null;
@@ -132,28 +132,29 @@ namespace SampleSupport
 
         private void samplesTreeView_DoubleClick(object sender, EventArgs e)
         {
-            if( this.currentSample != null ) {
+            if (this.currentSample != null)
+            {
                 RunCurrentSample();
             }
         }
 
         private static void colorizeCode(RichTextBox rtb)
         {
-            string[] keywords = {"as", "do", "if", "in", "is", "for", "int", "new", "out", "ref", "try", "base", 
-                                "bool", "byte", "case", "char", "else", "enum", "goto", "lock", "long", "null", 
-                                "this", "true", "uint", "void", "break", "catch", "class", "const", "event", "false", 
-                                "fixed", "float", "sbyte", "short", "throw", "ulong", "using", "where", "while", 
-                                "yield", "double", "extern", "object", "params", "public", "return", "sealed", 
-                                "sizeof", "static", "string", "struct", "switch", "typeof", "unsafe", "ushort", 
-                                "checked", "decimal", "default", "finally", "foreach", "partial", "private", 
-                                "virtual", "abstract", "continue", "delegate", "explicit", "implicit", "internal", 
-                                "operator", "override", "readonly", "volatile",  
+            string[] keywords = {"as", "do", "if", "in", "is", "for", "int", "new", "out", "ref", "try", "base",
+                                "bool", "byte", "case", "char", "else", "enum", "goto", "lock", "long", "null",
+                                "this", "true", "uint", "void", "break", "catch", "class", "const", "event", "false",
+                                "fixed", "float", "sbyte", "short", "throw", "ulong", "using", "where", "while",
+                                "yield", "double", "extern", "object", "params", "public", "return", "sealed",
+                                "sizeof", "static", "string", "struct", "switch", "typeof", "unsafe", "ushort",
+                                "checked", "decimal", "default", "finally", "foreach", "partial", "private",
+                                "virtual", "abstract", "continue", "delegate", "explicit", "implicit", "internal",
+                                "operator", "override", "readonly", "volatile",
                                 "interface", "namespace", "protected", "unchecked",
-                                "stackalloc", 
-                                "from", "in", "where", "select", "join", "equals", "let", "on", "group", "by", 
+                                "stackalloc",
+                                "from", "in", "where", "select", "join", "equals", "let", "on", "group", "by",
                                 "into", "orderby", "ascending", "descending", "var"};
             string text = rtb.Text;
-            
+
             rtb.SelectAll();
             rtb.SelectionColor = rtb.ForeColor;
 
@@ -169,7 +170,7 @@ namespace SampleSupport
                     while (quotePos != -1)
                     {
                         quoteCount++;
-                        quotePos = text.IndexOf("\"", quotePos + 1, keywordPos - (quotePos + 1),StringComparison.OrdinalIgnoreCase);
+                        quotePos = text.IndexOf("\"", quotePos + 1, keywordPos - (quotePos + 1), StringComparison.OrdinalIgnoreCase);
                     }
 
                     if (newLinePos >= commentPos && quoteCount % 2 == 0)
@@ -187,7 +188,8 @@ namespace SampleSupport
             RunCurrentSample();
         }
 
-        private void RunCurrentSample() {
+        private void RunCurrentSample()
+        {
             Cursor hold = this.Cursor;
             this.Cursor = Cursors.WaitCursor;
 

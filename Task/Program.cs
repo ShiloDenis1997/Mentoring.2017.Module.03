@@ -14,26 +14,26 @@ using System.IO;
 // See the ReadMe.html for additional information
 namespace SampleQueries
 {
-	static class Program
-	{
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static void Main(string[] args)
-		{
-			List<SampleHarness> harnesses = new List<SampleHarness>();
+    static class Program
+    {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main(string[] args)
+        {
+            List<SampleHarness> harnesses = new List<SampleHarness>();
 
-			
-			LinqSamples linqHarness = new LinqSamples();
-			harnesses.Add(linqHarness);
-						
-			Application.EnableVisualStyles();
-				
-			using (SampleForm form = new SampleForm("HomeWork - Mihail Romanov", harnesses))
-			{
-				form.ShowDialog();
-			}
-		}
-	}
+
+            LinqSamples linqHarness = new LinqSamples();
+            harnesses.Add(linqHarness);
+
+            Application.EnableVisualStyles();
+
+            using (SampleForm form = new SampleForm("HomeWork - Mihail Romanov", harnesses))
+            {
+                form.ShowDialog();
+            }
+        }
+    }
 }

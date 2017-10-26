@@ -40,16 +40,16 @@ namespace SampleSupport
             }
 
             String allCode = readFile(Application.StartupPath + @"\..\..\" + codeFile);
-            
+
             var methods =
-                from sm in samplesType.GetMethods(BindingFlags.Public|BindingFlags.Instance|
-                                                 BindingFlags.DeclaredOnly|BindingFlags.Static)
+                from sm in samplesType.GetMethods(BindingFlags.Public | BindingFlags.Instance |
+                                                 BindingFlags.DeclaredOnly | BindingFlags.Static)
                 where sm.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
                 orderby sm.MetadataToken
                 select sm;
 
             int m = 1;
-            foreach(var method in methods)
+            foreach (var method in methods)
             {
                 string methodCategory = "Miscellaneous";
                 string methodTitle = prefix + " Sample " + m;
@@ -65,14 +65,16 @@ namespace SampleSupport
                         methodTitle = ((TitleAttribute)a).Title;
                     else if (a is DescriptionAttribute)
                         methodDescription = ((DescriptionAttribute)a).Description;
-                    else if (a is LinkedMethodAttribute) {
+                    else if (a is LinkedMethodAttribute)
+                    {
                         MethodInfo linked = samplesType.GetMethod(((LinkedMethodAttribute)a).MethodName,
                                                                   (BindingFlags.Public | BindingFlags.NonPublic) |
                                                                   (BindingFlags.Static | BindingFlags.Instance));
                         if (linked != null)
                             linkedMethods.Add(linked);
                     }
-                    else if (a is LinkedClassAttribute) {
+                    else if (a is LinkedClassAttribute)
+                    {
                         Type linked = samplesType.GetNestedType(((LinkedClassAttribute)a).ClassName);
                         if (linked != null)
                             linkedClasses.Add(linked);
@@ -81,7 +83,7 @@ namespace SampleSupport
 
                 StringBuilder methodCode = new StringBuilder();
                 methodCode.Append(getCodeBlock(allCode, "void " + method.Name));
-                
+
                 foreach (MethodInfo lm in linkedMethods)
                 {
                     methodCode.Append(Environment.NewLine);
@@ -93,9 +95,9 @@ namespace SampleSupport
                     methodCode.Append(Environment.NewLine);
                     methodCode.Append(getCodeBlock(allCode, "class " + lt.Name));
                 }
-                
+
                 Sample sample = new Sample(this, method, methodCategory, methodTitle, methodDescription, methodCode.ToString());
-                
+
                 samples.Add(m, sample);
                 m++;
             }
@@ -109,7 +111,7 @@ namespace SampleSupport
                     fileContents = reader.ReadToEnd();
             else
                 fileContents = "";
-            
+
             return fileContents;
         }
 
@@ -135,16 +137,16 @@ namespace SampleSupport
                 {
                     switch (typeName)
                     {
-                        case "System.Void":     return "void";
-                        case "System.Int16":    return "short";
-                        case "System.Int32":    return "int";
-                        case "System.Int64":    return "long";
-                        case "System.Single":   return "float";
-                        case "System.Double":   return "double";
-                        case "System.String":   return "string";
-                        case "System.Char":     return "char";
-                        case "System.Boolean":  return "bool";
-                        
+                        case "System.Void": return "void";
+                        case "System.Int16": return "short";
+                        case "System.Int32": return "int";
+                        case "System.Int64": return "long";
+                        case "System.Single": return "float";
+                        case "System.Double": return "double";
+                        case "System.String": return "string";
+                        case "System.Char": return "char";
+                        case "System.Boolean": return "bool";
+
                         /* other primitive types omitted */
 
                         default:
@@ -160,7 +162,7 @@ namespace SampleSupport
         private static string getCodeBlock(string allCode, string blockName)
         {
             int blockStart = allCode.IndexOf(blockName, StringComparison.OrdinalIgnoreCase);
-            
+
             if (blockStart == -1)
                 return "// " + blockName + " code not found";
             blockStart = allCode.LastIndexOf(Environment.NewLine, blockStart, StringComparison.OrdinalIgnoreCase);
@@ -190,7 +192,7 @@ namespace SampleSupport
             } while (pos < allCode.Length && !(c == '}' && braceCount == 0));
 
             int blockEnd = pos;
-            
+
             string blockCode = allCode.Substring(blockStart, blockEnd - blockStart + 1);
 
             return removeIndent(blockCode);
@@ -218,9 +220,10 @@ namespace SampleSupport
         }
 
 
-        public virtual void InitSample() {}
+        public virtual void InitSample() { }
 
-        public virtual void HandleException(Exception e) {
+        public virtual void HandleException(Exception e)
+        {
             Console.Write(e);
         }
 
@@ -229,18 +232,20 @@ namespace SampleSupport
         {
             get { return _Title; }
         }
-        
+
         public StreamWriter OutputStreamWriter
         {
             get { return _OutputStreamWriter; }
-        }        
+        }
 
-        
-        public void RunAllSamples() {
+
+        public void RunAllSamples()
+        {
             TextWriter oldConsoleOut = Console.Out;
             Console.SetOut(StreamWriter.Null);
 
-            foreach (Sample sample in this) {
+            foreach (Sample sample in this)
+            {
                 sample.Invoke();
             }
 
@@ -284,13 +289,13 @@ namespace SampleSupport
             this._Description = description;
             this._Code = code;
         }
-        
+
 
         public SampleHarness Harness
         {
             get { return _Harness; }
         }
-        
+
         public MethodInfo Method
         {
             get { return _Method; }
@@ -300,22 +305,22 @@ namespace SampleSupport
         {
             get { return _Category; }
         }
-        
+
         public string Title
         {
             get { return _Title; }
         }
-        
+
         public string Description
         {
             get { return _Description; }
         }
-        
+
         public string Code
         {
             get { return _Code; }
         }
-        
+
 
         public void Invoke()
         {
@@ -349,7 +354,7 @@ namespace SampleSupport
             this.Title = title;
         }
 
-        public string Title {get; set;}
+        public string Title { get; set; }
     }
 
     [global::System.AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
@@ -360,7 +365,7 @@ namespace SampleSupport
             this.Prefix = prefix;
         }
 
-        public string Prefix {get; set;}
+        public string Prefix { get; set; }
     }
 
     [global::System.AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
@@ -382,7 +387,7 @@ namespace SampleSupport
             this.Description = description;
         }
 
-        public string Description {get; set;}
+        public string Description { get; set; }
     }
 
     [global::System.AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]

@@ -18,61 +18,61 @@ using Task.Data;
 
 namespace SampleQueries
 {
-	[Title("LINQ Module")]
-	[Prefix("Linq")]
-	public class LinqSamples : SampleHarness
-	{
+    [Title("LINQ Module")]
+    [Prefix("Linq")]
+    public class LinqSamples : SampleHarness
+    {
 
-		private DataSource dataSource = new DataSource();
+        private DataSource dataSource = new DataSource();
 
-		[Category("Restriction Operators")]
-		[Title("Where - Task 1")]
-		[Description("This sample uses the where clause to find all elements of an array with a value less than 5.")]
-		public void Linq1()
-		{
-			int[] numbers = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
+        [Category("Restriction Operators")]
+        [Title("Where - Task 1")]
+        [Description("This sample uses the where clause to find all elements of an array with a value less than 5.")]
+        public void Linq1()
+        {
+            int[] numbers = { 5, 4, 1, 3, 9, 8, 6, 7, 2, 0 };
 
-			var lowNums =
-				from num in numbers
-				where num < 5
-				select num;
+            var lowNums =
+              from num in numbers
+              where num < 5
+              select num;
 
-			Console.WriteLine("Numbers < 5:");
-			foreach (var x in lowNums)
-			{
-				Console.WriteLine(x);
-			}
-		}
+            Console.WriteLine("Numbers < 5:");
+            foreach (var x in lowNums)
+            {
+                Console.WriteLine(x);
+            }
+        }
 
-		[Category("Restriction Operators")]
-		[Title("Where - Task 2")]
-		[Description("This sample return return all presented in market products")]
+        [Category("Restriction Operators")]
+        [Title("Where - Task 2")]
+        [Description("This sample return return all presented in market products")]
 
-		public void Linq2()
-		{
-			var products =
-				from p in dataSource.Products
-				where p.UnitsInStock > 0
-				select p;
+        public void Linq2()
+        {
+            var products =
+              from p in dataSource.Products
+              where p.UnitsInStock > 0
+              select p;
 
-			foreach (var p in products)
-			{
-				ObjectDumper.Write(p);
-			}
-		}
+            foreach (var p in products)
+            {
+                ObjectDumper.Write(p);
+            }
+        }
 
-	    [Category("Try myselft")]
-	    [Title("Where - Task 2")]
-	    [Description("This sample return return all presented in market products")]
+        [Category("Try myselft")]
+        [Title("Where - Task 2")]
+        [Description("This sample return return all presented in market products")]
 
-	    public void Linq3()
-	    {
-	          var result = Enumerable.Range(100, 500).Where(number => number > 300);
-	        foreach (var item in result)
-	        {
-	            ObjectDumper.Write(item);
-	        }
-	    }
+        public void Linq3()
+        {
+            var result = Enumerable.Range(100, 500).Where(number => number > 300);
+            foreach (var item in result)
+            {
+                ObjectDumper.Write(item);
+            }
+        }
 
     }
 }
