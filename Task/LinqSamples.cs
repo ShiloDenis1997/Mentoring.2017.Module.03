@@ -4,13 +4,7 @@
 //
 //Copyright (C) Microsoft Corporation.  All rights reserved.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using System.Xml.Linq;
 using SampleSupport;
 using Task.Data;
 
@@ -32,11 +26,13 @@ namespace SampleQueries
         public void Linq001()
         {
             decimal x = 100;
-            var customersList = dataSource.Customers.Select(c => new
-            {
-                CustomerId = c.CustomerID,
-                TotalSum = c.Orders.Sum(o => o.Total)
-            }).Where(c => c.TotalSum > x);
+            var customersList = dataSource.Customers
+                .Where(c => c.Orders.Sum(o => o.Total) > x)
+                .Select(c => new
+                {
+                    CustomerId = c.CustomerID,
+                    TotalSum = c.Orders.Sum(o => o.Total)
+                });
 
             ObjectDumper.Write($"Greater than {x}");
             foreach (var customer in customersList)
@@ -59,29 +55,30 @@ namespace SampleQueries
 
         public void Linq002()
         {
-            var customersWithSuppliers = dataSource.Customers.Select(c => new
-            {
-                Customer = c,
-                Suppliers = dataSource.Suppliers.Where(s => s.City == c.City && s.Country == c.Country)
-            });
+            var customersWithSuppliers = dataSource.Customers
+                .Select(c => new
+                {
+                    Customer = c,
+                    Suppliers = dataSource.Suppliers.Where(s => s.City == c.City && s.Country == c.Country)
+                });
 
             ObjectDumper.Write("Without grouping\n");
-            foreach (var cs in customersWithSuppliers)
+            foreach (var customer in customersWithSuppliers)
             {
-                ObjectDumper.Write($"CustomerId: {cs.Customer.CustomerID} " +
-                    $"List of suppliers: {string.Join(", ", cs.Suppliers.Select(s => s.SupplierName))}");
+                ObjectDumper.Write($"CustomerId: {customer.Customer.CustomerID} " +
+                    $"List of suppliers: {string.Join(", ", customer.Suppliers.Select(s => s.SupplierName))}");
             }
 
             var result = dataSource.Customers.GroupJoin(dataSource.Suppliers,
                 c => new { c.City, c.Country },
                 s => new { s.City, s.Country },
-                (c, sups) => new { Customer = c, Suppliers = sups });
+                (c, s) => new { Customer = c, Suppliers = s });
 
             ObjectDumper.Write("With  grouping:\n");
-            foreach (var cs in result)
+            foreach (var c in result)
             {
-                ObjectDumper.Write($"CustomerId: {cs.Customer.CustomerID} " +
-                    $"List of suppliers: {string.Join(", ", cs.Suppliers.Select(s => s.SupplierName))}");
+                ObjectDumper.Write($"CustomerId: {c.Customer.CustomerID} " +
+                    $"List of suppliers: {string.Join(", ", c.Suppliers.Select(s => s.SupplierName))}");
             }
         }
 
@@ -169,14 +166,14 @@ namespace SampleQueries
         {
             var groups = dataSource.Products
                 .GroupBy(p => p.Category)
-                .Select(gr => new
+                .Select(g => new
                 {
-                    Category = gr.Key,
-                    ProductsByStock = gr.GroupBy(pr => pr.UnitsInStock > 0)
-                        .Select(group => new
+                    Category = g.Key,
+                    ProductsByStock = g.GroupBy(p => p.UnitsInStock > 0)
+                        .Select(a => new
                         {
-                            HasInStock = group.Key,
-                            Products = group.OrderBy(prod => prod.UnitPrice)
+                            HasInStock = a.Key,
+                            Products = a.OrderBy(prod => prod.UnitPrice)
                         })
                 });
 
@@ -224,11 +221,11 @@ namespace SampleQueries
         {
             var results = dataSource.Customers
                 .GroupBy(c => c.City)
-                .Select(cityCustomers => new
+                .Select(c => new
                 {
-                    City = cityCustomers.Key,
-                    Intensity = cityCustomers.Average(cityCustomer => cityCustomer.Orders.Count()),
-                    AverageIncome = cityCustomers.Average(cityCustomer => cityCustomer.Orders.Sum(o => o.Total))
+                    City = c.Key,
+                    Intensity = c.Average(p => p.Orders.Length),
+                    AverageIncome = c.Average(p => p.Orders.Sum(o => o.Total))
                 });
 
             foreach (var group in results)
@@ -249,13 +246,13 @@ namespace SampleQueries
                 .Select(c => new
                 {
                     c.CustomerID,
-                    MonthsStatistic = c.Orders.GroupBy(order => order.OrderDate.Month)
-                                        .Select(gr => new { Month = gr.Key, OrdersCount = gr.Count() }),
-                    YearsStatistic = c.Orders.GroupBy(order => order.OrderDate.Year)
-                                        .Select(gr => new { Year = gr.Key, OrdersCount = gr.Count() }),
+                    MonthsStatistic = c.Orders.GroupBy(o => o.OrderDate.Month)
+                                        .Select(g => new { Month = g.Key, OrdersCount = g.Count() }),
+                    YearsStatistic = c.Orders.GroupBy(o => o.OrderDate.Year)
+                                        .Select(g => new { Year = g.Key, OrdersCount = g.Count() }),
                     YearMonthStatistic = c.Orders
-                                        .GroupBy(order => new { order.OrderDate.Year, order.OrderDate.Month })
-                                        .Select(gr => new {  gr.Key.Year, gr.Key.Month, OrdersCount = gr.Count() })
+                                        .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                                        .Select(g => new { g.Key.Year, g.Key.Month, OrdersCount = g.Count() })
                 });
 
             foreach (var record in statistic)
